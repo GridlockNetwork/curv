@@ -268,6 +268,45 @@ where
         let denum = denum.invert();
         num * denum
     }
+
+    pub fn map_share_to_new_params_for_x(
+        params: &ShamirSecretSharing,
+        x_index: usize,
+        index: usize,
+        s: &[usize],
+    ) -> P::Scalar {
+        let s_len = s.len();
+
+        let points: Vec<P::Scalar> = (0..params.share_count)
+            .map(|i| {
+                let index_bn = BigInt::from(i as u32 + 1);
+                ECScalar::from(&index_bn)
+            })
+            .collect();
+
+        let x = &points[x_index];
+        let xi = &points[index];
+        let num: P::Scalar = ECScalar::from(&BigInt::one());
+        let denum: P::Scalar = ECScalar::from(&BigInt::one());
+        let num = (0..s_len).fold(num, |acc, i| {
+            if s[i] != index {
+                let xj_sub_x = points[s[i]].sub(&x.get_element());
+                acc * xj_sub_x
+            } else {
+                acc
+            }
+        });
+        let denum = (0..s_len).fold(denum, |acc, i| {
+            if s[i] != index {
+                let xj_sub_xi = points[s[i]].sub(&xi.get_element());
+                acc * xj_sub_xi
+            } else {
+                acc
+            }
+        });
+        let denum = denum.invert();
+        num * denum
+    }
 }
 
 #[cfg(test)]
