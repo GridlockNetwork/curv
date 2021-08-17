@@ -350,13 +350,12 @@ mod test {
         T: ZeroizeBN,
         u64: ConvertFrom<BigInt>,
         // Foreign traits implementations
-        T: zeroize::Zeroize + ring_algorithm::RingNormalize + num_traits::One + num_traits::Zero,
+        T: zeroize::Zeroize + num_traits::One + num_traits::Zero,
         T: num_traits::Num + num_integer::Integer + num_integer::Roots,
-        for<'a> &'a T: ring_algorithm::EuclideanRingOperation<T>,
         // Conversion traits
         for<'a> u64: std::convert::TryFrom<&'a BigInt>,
         for<'a> i64: std::convert::TryFrom<&'a BigInt>,
-        BigInt: From<u32> + From<i32> + From<u64>,
+        BigInt: From<u16> + From<u32> + From<i32> + From<u64>,
         // STD Operators
         BigInt: Add<Output = BigInt>
             + Sub<Output = BigInt>

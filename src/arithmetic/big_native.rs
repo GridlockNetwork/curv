@@ -11,6 +11,7 @@ use num_bigint::BigInt as BN;
 use num_bigint::Sign;
 
 mod primes;
+mod ring_algorithms;
 
 /// Big integer
 ///
@@ -99,6 +100,12 @@ impl num_traits::Num for BigInt {
 
 crate::__bigint_impl_from! { u32, i32, u64 }
 
+impl From<u16> for BigInt {
+    fn from(n: u16) -> Self {
+        BigInt::from(u64::from(n))
+    }
+}
+
 impl BasicOps for BigInt {
     fn pow(&self, exponent: u32) -> Self {
         self.num.pow(exponent).wrap()
@@ -165,7 +172,7 @@ impl Modulo for BigInt {
     }
 
     fn mod_inv(a: &Self, modulus: &Self) -> Option<Self> {
-        ring_algorithm::modulo_inverse(a.clone(), modulus.clone()).map(|inv| inv.modulus(modulus))
+        ring_algorithms::modulo_inverse(a, modulus).map(|inv| inv.modulus(modulus))
     }
 
     fn modulus(&self, modulus: &Self) -> Self {
@@ -210,7 +217,7 @@ impl NumberTests for BigInt {
 
 impl EGCD for BigInt {
     fn egcd(a: &Self, b: &Self) -> (Self, Self, Self) {
-        ring_algorithm::normalized_extended_euclidian_algorithm(a.clone(), b.clone())
+        ring_algorithms::normalized_extended_euclidian_algorithm(a, b)
     }
 }
 
@@ -368,19 +375,6 @@ impl num_traits::Zero for BigInt {
 impl num_traits::One for BigInt {
     fn one() -> Self {
         BN::one().wrap()
-    }
-}
-
-impl ring_algorithm::RingNormalize for BigInt {
-    fn leading_unit(&self) -> Self {
-        match self.num.sign() {
-            Sign::Minus => -BigInt::one(),
-            _ => BigInt::one(),
-        }
-    }
-
-    fn normalize_mut(&mut self) {
-        self.num = self.num.abs();
     }
 }
 
