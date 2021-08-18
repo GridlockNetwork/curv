@@ -240,20 +240,20 @@ impl VerifiableSS {
         x_index: usize,
         index: usize,
         s: &[usize],
-    ) -> P::Scalar {
+    ) -> FE {
         let s_len = s.len();
 
-        let points: Vec<P::Scalar> = (0..params.share_count)
+        let points: Vec<FE> = (0..self.parameters.share_count)
             .map(|i| {
-                let index_bn = BigInt::from(i as u32 + 1);
+                let index_bn = BigInt::from(i as u32 + 1 as u32);
                 ECScalar::from(&index_bn)
             })
-            .collect();
+            .collect::<Vec<FE>>();
 
         let x = &points[x_index];
         let xi = &points[index];
-        let num: P::Scalar = ECScalar::from(&BigInt::one());
-        let denum: P::Scalar = ECScalar::from(&BigInt::one());
+        let num: FE = ECScalar::from(&BigInt::one());
+        let denum: FE = ECScalar::from(&BigInt::one());
         let num = (0..s_len).fold(num, |acc, i| {
             if s[i] != index {
                 let xj_sub_x = points[s[i]].sub(&x.get_element());
