@@ -235,12 +235,7 @@ impl VerifiableSS {
         num * denum
     }
 
-    pub fn map_share_to_new_params_for_x(
-        params: &ShamirSecretSharing,
-        x_index: usize,
-        index: usize,
-        s: &[usize],
-    ) -> FE {
+    pub fn map_share_to_new_params_for_x(&self, x_index: usize, index: usize, s: &[usize]) -> FE {
         let s_len = s.len();
 
         let points: Vec<FE> = (0..self.parameters.share_count)
