@@ -84,7 +84,7 @@ pub mod secp256_k1;
 
 #[cfg(test)]
 mod test;
-mod traits;
+pub mod traits;
 mod wrappers;
 
 #[doc(inline)]
