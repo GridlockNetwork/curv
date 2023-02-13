@@ -14,6 +14,7 @@ use std::{fmt, ops, ptr, str};
 
 use cryptoxide::curve25519::*;
 use generic_array::GenericArray;
+use serde_derive::{Serialize, Deserialize};
 use zeroize::{Zeroize, Zeroizing};
 
 use crate::arithmetic::traits::*;
@@ -97,7 +98,7 @@ impl ops::DerefMut for SK {
 ///   recovering x coordinate of ed25519 point from its y coordinate. Every time you call
 ///   `.x_coord()` or `from_coords()`, it takes y coordinate and runs `xrecover(y)` underhood. Keep
 ///   in mind that `xrecover` is quite expensive operation.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub enum Ed25519 {}
 
 #[derive(Clone)]
