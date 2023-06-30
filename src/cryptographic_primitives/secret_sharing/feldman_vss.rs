@@ -281,6 +281,38 @@ mod tests {
     use super::*;
     use crate::test_for_all_curves;
 
+    #[test]
+    fn test_secret_sharing_nonzero_bytes_scalar() {
+        use crate::elliptic::curves::Ed25519;
+        let hex = "c7a6092f36147a916e6e4de83542f7e49dee2a005ca3eea7307457d5db059311";
+        // "66677436796a6867333231000000000000000000000000000000000000000000"
+        // "c7a6092f36147a916e6e4de83542f7e49dee2a005ca3eea7307457d5db059353"
+        let bytes = hex::decode(hex).expect("hex decoded bytes");
+        let secret = Scalar::<Ed25519>::from_bytes(&bytes).expect("scalar constructed from bytes");
+
+        let parties = [1, 2, 4, 5, 6];
+        let (vss_scheme, secret_shares) =
+            VerifiableSS::<Ed25519>::share_at_indices(3, 5, &secret, &parties);
+
+        let shares_vec = vec![
+            secret_shares[0].clone(),
+            secret_shares[1].clone(),
+            secret_shares[3].clone(),
+            secret_shares[4].clone(),
+        ];
+
+        let secret_reconstructed = vss_scheme.reconstruct(&[0, 1, 4, 5], &shares_vec);
+
+        let hex_secret = hex::encode(secret.to_bytes().to_vec());
+        let hex_secret_reconstructed = hex::encode(secret_reconstructed.to_bytes().to_vec());
+        assert_eq!(
+            &secret,
+            &secret_reconstructed,
+            "\nSecret doesn't match reconstructed secret\nhex_secret: {0}\nhex_secret_reconstructed: {1}",
+            hex_secret,
+            hex_secret_reconstructed);
+    }
+
     test_for_all_curves!(test_secret_sharing_3_out_of_5_at_indices);
 
     fn test_secret_sharing_3_out_of_5_at_indices<E: Curve>() {
