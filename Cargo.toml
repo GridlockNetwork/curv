@@ -57,5 +57,8 @@ proptest = "0.10"
 proptest-derive = "0.2"
 blake2 = "0.9"
 
+[features]
+default = ["num-bigint"]
+
 [package.metadata.docs.rs]
 rustdoc-args = [ "--html-in-header", "katex-header.html", "--cfg", "docsrs" ]
